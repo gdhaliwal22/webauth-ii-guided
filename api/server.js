@@ -5,9 +5,11 @@ const helmet = require("helmet");
 // research credentails: true when connecting from your React app
 const cors = require("cors"); // cross origin resource sharing
 const session = require("express-session"); // 1: npm i express-session
+const KnexSessionStorage = require("connect-session-knex")(session); // <<<<< for storing sessions in db
 
 const authRouter = require("../auth/auth-router.js");
 const usersRouter = require("../users/users-router.js");
+const knexConnection = require("../database/dbConfig.js");
 
 const server = express();
 
@@ -22,6 +24,13 @@ const sessionConfiguration = {
     secure: process.env.NODE_ENV === "development" ? false : true, // do we send cookie over unsecure https only?
     httpOnly: true // prevent client JS code from access to the cookie, browser will now protect this cookie
   }
+  // store: new KnexSessionStorage({
+  //   knex: knexConnection,
+  //   clearInterval: 1000 * 60 * 10, // delete expires sessions every 10 minutes
+  //   tablename: "user_sessions", // name of table i want created
+  //   sidfieldname: "id", // name of the id for the table
+  //   createtable: true // if table is not there go ahead and create it
+  // })
 };
 
 server.use(helmet());
